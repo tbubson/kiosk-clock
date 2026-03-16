@@ -3,52 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kiosk Digital Clock</title>
+    <title>Minimalist Digital Clock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Black background and removes scrollbars */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
+        
         body {
-            background-color: black;
-            color: white;
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
         }
 
-        /* Large, readable clock text */
-        #clock {
-            font-size: 15vw; /* Scales with screen size */
-            font-weight: bold;
-            letter-spacing: 2px;
+        .clock-container {
+            text-align: center;
+            padding: 3rem;
+            border-radius: 2rem;
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .time-display {
+            font-size: 8rem;
+            font-weight: 700;
+            color: #f8fafc;
+            letter-spacing: -0.05em;
+            line-height: 1;
+        }
+
+        .date-display {
+            margin-top: 1rem;
+            font-size: 1.25rem;
+            color: #94a3b8;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* Removed the blink animation from here */
+        .colon {
+            opacity: 1;
+        }
+
+        @media (max-width: 640px) {
+            .time-display {
+                font-size: 5rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div id="clock">00:00:00</div>
+    <div class="clock-container">
+        <div id="clock" class="time-display">
+            <span id="hours">00</span><span class="colon">:</span><span id="minutes">00</span>
+        </div>
+        <div id="date" class="date-display">
+            Loading...
+        </div>
+    </div>
 
     <script>
         function updateClock() {
             const now = new Date();
+            
+            // Format hours and minutes
             let hours = now.getHours();
-            let minutes = now.getMinutes();
-            let seconds = now.getSeconds();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            // Optional: Convert to 12-hour format if desired
+            // hours = hours % 12 || 12; 
+            const hoursStr = String(hours).padStart(2, '0');
 
-            // Pad single digits with a leading zero
-            hours = hours < 10 ? '0' + hours : hours;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
+            // Update DOM
+            document.getElementById('hours').textContent = hoursStr;
+            document.getElementById('minutes').textContent = minutes;
 
-            const timeString = `${hours}:${minutes}:${seconds}`;
-            document.getElementById('clock').textContent = timeString;
+            // Format Date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').textContent = now.toLocaleDateString(undefined, options);
         }
 
-        // Update every second
+        // Run immediately
+        updateClock();
+        
+        // Update every second to ensure the time is accurate as soon as the minute changes
         setInterval(updateClock, 1000);
-        updateClock(); // Run immediately on load
     </script>
 </body>
 </html>
